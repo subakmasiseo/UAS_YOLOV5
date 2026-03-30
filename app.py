@@ -1,7 +1,8 @@
+import pathlib
+
 import streamlit as st
 import torch
 from PIL import Image
-import pathlib
 
 # =========================
 # FIX Linux -> Windows Path
@@ -11,11 +12,7 @@ pathlib.PosixPath = pathlib.WindowsPath
 # =========================
 # PAGE CONFIG
 # =========================
-st.set_page_config(
-    page_title="YOLOv5 Face Mask Detection",
-    page_icon="😷",
-    layout="centered"
-)
+st.set_page_config(page_title="YOLOv5 Face Mask Detection", page_icon="😷", layout="centered")
 
 st.title("😷 YOLOv5 Face Mask Detection")
 st.markdown(
@@ -29,30 +26,21 @@ Aplikasi ini menggunakan **YOLOv5** untuk mendeteksi penggunaan masker wajah.
 """
 )
 
+
 # =========================
 # LOAD MODEL
 # =========================
 @st.cache_resource
 def load_model():
-    return torch.hub.load(
-        "ultralytics/yolov5",
-        "custom",
-        path="weights/best_fixed.pt",
-        force_reload=False
-    )
+    return torch.hub.load("ultralytics/yolov5", "custom", path="weights/best_fixed.pt", force_reload=False)
+
 
 model = load_model()
 
 # =========================
 # CONFIDENCE SLIDER
 # =========================
-conf = st.slider(
-    "Confidence Threshold",
-    min_value=0.1,
-    max_value=0.9,
-    value=0.25,
-    step=0.05
-)
+conf = st.slider("Confidence Threshold", min_value=0.1, max_value=0.9, value=0.25, step=0.05)
 model.conf = conf
 
 st.divider()
@@ -61,10 +49,7 @@ st.divider()
 # IMAGE UPLOAD
 # =========================
 st.subheader("📤 Upload Gambar")
-uploaded_file = st.file_uploader(
-    "Pilih gambar",
-    type=["jpg", "jpeg", "png"]
-)
+uploaded_file = st.file_uploader("Pilih gambar", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
     image = Image.open(uploaded_file).convert("RGB")
@@ -73,11 +58,7 @@ if uploaded_file is not None:
     results = model(image)
     results.render()
 
-    st.image(
-        results.ims[0],
-        caption="Hasil Deteksi",
-        use_container_width=True
-    )
+    st.image(results.ims[0], caption="Hasil Deteksi", use_container_width=True)
 
 st.divider()
 
@@ -96,11 +77,7 @@ if use_camera:
         results = model(image)
         results.render()
 
-        st.image(
-            results.ims[0],
-            caption="Hasil Deteksi",
-            use_container_width=True
-        )
+        st.image(results.ims[0], caption="Hasil Deteksi", use_container_width=True)
 
 # =========================
 # FOOTER
